@@ -118,63 +118,66 @@ public class MyApp {
     private String cleanseRoster(String s) {
 		// TODO Auto-generated method stub
     	/* Parse the contents of the string to only return meaningful information: 
-    	   dates, shift start times and shift end times.*/
+    	   dates, shift start and end times.*/
     	
+    	//Roster is always 28 days - this array will store each day as an array size 2
+    	//that includes the date and shift time for each day. Days off will contain
+    	//an empty string.
 		String[][] output = new String[28][2];
-		int counter1 = 0;
-		int counter2 = 0;
+		
+		for (int i = 0; i < output.length; i++) { //Initialise array with "" for each date
+			output[i][1] = "";
+		}
+		
+		int j = 0; // Counts which date we are up to for parsing the dates
+		int k = 0; // Counts which date we are up to for parsing shifts
 
     	//Iterate through each character of the string
-    	for(int i = 0; (i < s.length()) && (counter1 < 28); i++) {
+    	for(int i = 0; (i < s.length()); i++) {
 			//If the character is a digit, check if it is a date by
     		//seeing if there is a '/' in the next two chars.
     		if (Character.isDigit(s.charAt(i))) {
 				//Catch dates
-    			if (s.charAt(i + 2) == '/') {
-					output[counter1][0] = s.substring(i, i + 8);
-					counter1++;
+    			if (s.charAt(i + 2) == '/' && j < 28) {
+					output[j][0] = s.substring(i, i + 8);
+					j++;
 					i += 8;
 				//Catch shifts
     			} else if (s.charAt(i+1) == 'a' || s.charAt(i+1) == 'p' || s.charAt(i+2) == 'a' || s.charAt(i+2) == 'p') {
-    				while (!Character.isWhitespace(s.charAt(i))) {
-    					output[counter2][1] += s.charAt(i);
+    				while (!(Character.isWhitespace(s.charAt(i)))) {
+    					output[k][1] += String.valueOf(s.charAt(i));
     					i++;
     				}
-    				counter2++;
-    				
+    				k++;
     			}
 			} else if (s.charAt(i) == 'R') {
 				//Catch recreation leave days
 				if (s.charAt(i+1) == 'e' && s.charAt(i+2) == 'c') {
-					counter2++;
-					i += 9;
+					k++;
+					i += 10;
 				//Catch rest days
 				} else if (s.charAt(i+1) == 'D') {
-					counter2++;
+					k++;
 					i += 2;
 				}
 			} else if (s.charAt(i) == 'P') {
 				//Catch programmed days off
 				if (s.charAt(i+1) == 'D' && s.charAt(i+2) == 'O') {
-					counter2++;
+					k++;
 					i += 3;
 				}
 				//Catch sick leave days
 			} else if (s.charAt(i) == 'S' && s.charAt(i+1) == 'i' && s.charAt(i+2) == 'c') {
-				counter2++;
-				i += 10;
+				k++;
+				i += 11;
 			}
 				
 		}
     	
     	for (int i = 0; i < output.length; i++) {
     		System.out.print(output[i][0] + " ");
+    		System.out.print(output[i][1] + "\n");
     	}
-    	System.out.print("\n");
-    	for (int i = 0; i < output.length; i++) {
-    		System.out.print(output[i][1] + " ");
-    	}
-    	System.out.print("\n");
     	
     	return s;
 	}
